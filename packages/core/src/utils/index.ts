@@ -41,6 +41,24 @@ export type Deferrable<T> = {
 };
 
 /**
+ * @description Constructs a type by excluding `undefined` from `T`.
+ *
+ * @example
+ * NoUndefined<string | undefined>
+ * => string
+ */
+export type NoUndefined<T> = T extends undefined ? never : T;
+
+/**
+ * @description Checks if {@link T} is `undefined`
+ * @param T - Type to check
+ * @example
+ * type Result = IsUndefined<undefined>
+ * //   ^? type Result = true
+ */
+export type IsUndefined<T> = [undefined] extends [T] ? true : false;
+
+/**
  * Await all of the properties of a {@link Deferrable} object
  *
  * @param object - a {@link Deferrable} object

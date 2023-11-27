@@ -180,10 +180,8 @@ describe("Light Account Tests", () => {
     const newThrowawayOwner = LocalAccountSigner.privateKeyToAccountSigner(
       generatePrivateKey()
     );
-    const result = await LightSmartContractAccount.transferOwnership(
-      throwawayProvider,
-      newThrowawayOwner
-    );
+    const result = await throwawayProvider.transferOwnership(newThrowawayOwner);
+
     const txnHash = throwawayProvider.waitForUserOperationTransaction(result);
     await expect(txnHash).resolves.not.toThrowError();
 
@@ -228,5 +226,6 @@ const givenConnectedProvider = ({
   provider.withAlchemyGasManager({
     policyId: PAYMASTER_POLICY_ID,
   });
+
   return provider;
 };

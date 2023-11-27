@@ -67,4 +67,4 @@ export { LogLevel, Logger } from "./logger.js";
 export { BasicAccountSigner } from "./account/builder/basicSigner.js";
 export type * from "./account/builder/index.js";
 export { SmartAccountBuilder } from "./account/builder/index.js";
-export { buildSimpleAccount } from "./account/simple.js";
+export { buildSimpleAccount, simpleAccountBuilder } from "./account/simple.js";

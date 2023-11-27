@@ -1,6 +1,7 @@
 import {
   SimpleSmartContractAccount,
   SmartAccountProvider,
+  type ISmartAccountProvider,
   type SignTypedDataParams,
   type SmartAccountSigner,
 } from "@alchemy/aa-core";
@@ -20,6 +21,27 @@ import { LightAccountFactoryAbi } from "./abis/LightAccountFactoryAbi.js";
 export class LightSmartContractAccount<
   TTransport extends Transport | FallbackTransport = Transport
 > extends SimpleSmartContractAccount<TTransport> {
+  providerDecorators = (provider: ISmartAccountProvider<TTransport>) => ({
+    transferOwnership: async (
+      newOwner: SmartAccountSigner,
+      waitForTxn: boolean = false
+    ): Promise<Hash> => {
+      const data = LightSmartContractAccount.encodeTransferOwnership(
+        await newOwner.getAddress()
+      );
+
+      const result = await provider.sendUserOperation(data);
+
+      this.owner = newOwner;
+
+      if (waitForTxn) {
+        return provider.waitForUserOperationTransaction(result.hash);
+      }
+
+      return result.hash;
+    },
+  });
+
   override async signTypedData(params: SignTypedDataParams): Promise<Hash> {
     return this.owner.signTypedData(params);
   }

@@ -89,13 +89,13 @@ export class SimpleSmartContractAccount<
   }
 }
 
-export const buildSimpleAccount = <
+export const simpleAccountBuilder = <
   TTransport extends Transport | FallbackTransport = Transport
 >(
   params_: SimpleSmartAccountParams<TTransport>
 ) => {
   const params = SimpleSmartAccountParamsSchema<TTransport>().parse(params_);
-  const builder = new SmartAccountBuilder()
+  return new SmartAccountBuilder()
     .withSigner(BasicAccountSigner(params.owner))
     .withFactory(() => ({
       factoryAddress: params.factoryAddress,
@@ -138,6 +138,13 @@ export const buildSimpleAccount = <
         });
       },
     }));
+};
 
-  return builder.build<TTransport>(params);
+export const buildSimpleAccount = <
+  TTransport extends Transport | FallbackTransport = Transport
+>(
+  params_: SimpleSmartAccountParams<TTransport>
+) => {
+  const params = SimpleSmartAccountParamsSchema<TTransport>().parse(params_);
+  return simpleAccountBuilder(params).build<TTransport>(params);
 };
