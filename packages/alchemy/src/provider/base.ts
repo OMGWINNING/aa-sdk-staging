@@ -90,7 +90,7 @@ export class AlchemyProvider extends SmartAccountProvider<HttpTransport> {
   withAlchemyGasManager(
     config: AlchemyGasManagerConfig,
     delegateGasEstimation: boolean = true
-  ): AlchemyProvider {
+  ): this {
     if (!this.isConnected()) {
       throw new Error(
         "AlchemyProvider: account is not set, did you call `connect` first?"

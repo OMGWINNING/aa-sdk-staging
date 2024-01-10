@@ -27,7 +27,7 @@ import type {
   UserOperationStruct,
 } from "../types.js";
 import type { Deferrable } from "../utils";
-import type { IsUndefined, NoUndefined } from "../utils/types.js";
+import type { IsUndefined, NoUndefined, Prettify } from "../utils/types.js";
 import type {
   ConnectionConfigSchema,
   SmartAccountProviderOptsSchema,
@@ -371,7 +371,17 @@ export interface ISmartAccountProvider<
    *
    * @returns the provider with the account disconnected
    */
-  disconnect(): this & { account: undefined };
+  disconnect(): Prettify<
+    Omit<
+      this,
+      | (IsUndefined<this["account"]> extends true
+          ? keyof {}
+          : keyof ReturnType<
+              NoUndefined<NoUndefined<this["account"]>["providerDecorators"]>
+            >)
+      | "account"
+    >
+  > & { account: undefined };
 
   /**
    * Allows you to add additional functionality and utility methods to this provider

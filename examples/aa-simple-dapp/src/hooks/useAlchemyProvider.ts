@@ -53,7 +53,7 @@ export const useAlchemyProvider = () => {
   );
 
   const disconnectProviderFromAccount = useCallback(() => {
-    const disconnectedProvider = provider.disconnect();
+    const disconnectedProvider = provider.disconnect() as AlchemyProvider;
 
     setProvider(disconnectedProvider);
     return disconnectedProvider;

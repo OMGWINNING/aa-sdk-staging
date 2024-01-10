@@ -46,7 +46,11 @@ import {
   resolveProperties,
   type Deferrable,
 } from "../utils/index.js";
-import { type IsUndefined, type NoUndefined } from "../utils/types.js";
+import {
+  type IsUndefined,
+  type NoUndefined,
+  type Prettify,
+} from "../utils/types.js";
 import { createSmartAccountProviderConfigSchema } from "./schema.js";
 import type {
   AccountMiddlewareFn,
@@ -717,15 +721,41 @@ export class SmartAccountProvider<
           >;
   };
 
-  disconnect = (): this & { account: undefined } => {
+  disconnect = (): Prettify<
+    Omit<
+      this,
+      | (IsUndefined<this["account"]> extends true
+          ? keyof {}
+          : keyof ReturnType<
+              NoUndefined<NoUndefined<this["account"]>["providerDecorators"]>
+            >)
+      | "account"
+    >
+  > & { account: undefined } => {
     if (this.account) {
       this.emit("disconnect");
       this.emit("accountsChanged", []);
+
+      // we need to remove the provider decorators provided by the account
+      for (const key in this.account?.providerDecorators?.(this) ?? {}) {
+        delete (this as any)[key];
+      }
+    }
+
+    if (this.account && this.account.providerDecorators) {
+      defineReadOnly(this, "account", undefined);
+
+      return this as Exclude<
+        typeof this,
+        keyof ReturnType<NoUndefined<typeof this.account.providerDecorators>>
+      > & { account: undefined };
     }
 
     defineReadOnly(this, "account", undefined);
 
-    return this as this & { account: undefined };
+    return this as this & {
+      account: undefined;
+    };
   };
 
   isConnected = <TAccount extends ISmartContractAccount>(): this is this & {
