@@ -7,15 +7,18 @@ export const GetContractGenPhase: Phase = async (input) => {
   addImport("viem", { name: "getContract", isType: false });
   addImport("viem", { name: "GetContractReturnType", isType: true });
   addImport("viem", { name: "Address", isType: true });
+  addImport("viem", { name: "PublicClient", isType: true });
+  addImport("viem", { name: "Transport", isType: true });
+  addImport("viem", { name: "Chain", isType: true });
   content.push(dedent`
-  getContract: (
-    provider: ISmartAccountProvider,
+  getContract: <P extends PublicClient<Transport, Chain>>(
+    provider: P,
     address?: Address
-  ): GetContractReturnType<typeof ${contract.name}Abi, typeof provider.rpcClient, undefined, Address> =>
+  ): GetContractReturnType<typeof ${contract.name}Abi, P, undefined, Address> =>
     getContract({
-      address: address || addresses[provider.rpcClient.chain.id],
+      address: address || addresses[provider.chain.id],
       abi: ${contract.name}Abi,
-      publicClient: provider.rpcClient,
+      publicClient: provider,
     })
   `);
 
