@@ -1,5 +1,6 @@
+import { createRundler } from "@alch/rundler-js";
 import { createPublicClient, custom, http, type Address } from "viem";
-import { polygonMumbai, sepolia, type Chain } from "viem/chains";
+import { sepolia, type Chain } from "viem/chains";
 import { describe, it } from "vitest";
 import { createPublicErc4337FromClient } from "../../client/publicErc4337Client.js";
 import { createSmartAccountClient } from "../../client/smartAccountClient.js";
@@ -10,23 +11,70 @@ import { getDefaultSimpleAccountFactoryAddress } from "../../utils/index.js";
 import { createSimpleSmartAccount } from "../simple.js";
 
 describe("Account Simple Tests", async () => {
+  const chain = sepolia;
   const dummyMnemonic =
     "test test test test test test test test test test test test";
   const owner: SmartAccountSigner =
     LocalAccountSigner.mnemonicToAccountSigner(dummyMnemonic);
+  const rundler = createRundler({
+    anvilOptions: {
+      forkUrl: "https://cloudflare-eth.com",
+      forkChainId: chain.id,
+      forkBlockNumber: 5173732n,
+      chainId: chain.id,
+      noMining: true,
+      startTimeout: 20_000,
+    },
+    rundlerOptions: {
+      chain_id: chain.id,
+    },
+  });
+  beforeAll(async () => {
+    await rundler.start();
+    // TODO: remove this, just testing to see if anvil startup cost
+    // is a one time thing
+  }, 60000);
 
-  const chain = polygonMumbai;
+  afterEach(async (context) => {
+    context.onTestFailed(async () => {
+      // If a test fails, you can fetch and print the logs of your anvil instance.
+      const logs = rundler.anvil.logs;
+      // Only print the 20 most recent log messages.
+      console.log(...logs.slice(-20));
+    });
+  });
+
+  afterAll(async () => {
+    await rundler.stop();
+  });
+
   const publicClient = createPublicErc4337FromClient(
     createPublicClient({
       chain,
-      transport: custom({
-        request: async ({ method }) => {
-          if (method === "eth_getCode") {
-            return "0x" as Address;
-          }
-          return;
-        },
-      }),
+      transport: (opts) => {
+        const bundlerRpc = http(`http://${rundler.host}:${rundler.port}`)(opts);
+        const publicRpc = http(
+          `http://${rundler.anvil.host}:${rundler.anvil.port}`
+        )(opts);
+
+        return custom({
+          request: async (args) => {
+            const bundlerMethods = new Set([
+              "eth_sendUserOperation",
+              "eth_estimateUserOperationGas",
+              "eth_getUserOperationReceipt",
+              "eth_getUserOperationByHash",
+              "eth_supportedEntryPoints",
+            ]);
+
+            if (bundlerMethods.has(args.method)) {
+              return bundlerRpc.request(args);
+            } else {
+              return publicRpc.request(args);
+            }
+          },
+        })(opts);
+      },
     })
   );
 
@@ -151,7 +199,6 @@ describe("Account Simple Tests", async () => {
       account: await createSimpleSmartAccount({
         chain,
         owner,
-        accountAddress: "0x1234567890123456789012345678901234567890",
         factoryAddress: getDefaultSimpleAccountFactoryAddress(chain),
         rpcClient: publicClient,
       }),

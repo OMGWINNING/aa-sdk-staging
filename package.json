@@ -9,7 +9,8 @@
     "packages/*",
     "templates/*",
     "examples/*",
-    "site"
+    "site",
+    "rundlerjs"
   ],
   "scripts": {
     "generate": "lerna run generate",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",
     "@commitlint/config-conventional": "^17.6.3",
+    "@viem/anvil": "^0.0.7",
     "eslint": "^8.39.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-import": "^2.27.5",
