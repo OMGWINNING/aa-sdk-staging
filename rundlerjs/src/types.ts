@@ -1,7 +1,6 @@
 import type { Anvil } from "@viem/anvil";
-import path from "path";
-import { fileURLToPath } from "url";
 import { z } from "zod";
+import { getDefaultBinaryPath } from "./utils.js";
 
 export type Rundler = {
   start: () => Promise<void>;
@@ -10,11 +9,6 @@ export type Rundler = {
   readonly port: number;
   readonly host: string;
 };
-
-const __filename = fileURLToPath(import.meta.url);
-const fileParts = __filename.split(path.sep);
-fileParts.pop();
-fileParts.pop();
 
 export const RundlerOptionsSchema = z.object({
   rpc: z
@@ -42,7 +36,7 @@ export const RundlerOptionsSchema = z.object({
 
 export const RundlerCreationOptionsSchema = z
   .object({
-    binaryPath: z.string().default(fileParts.join(path.sep) + "/rundler"),
+    binaryPath: z.string().default(getDefaultBinaryPath()),
   })
   .and(RundlerOptionsSchema);
 

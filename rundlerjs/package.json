@@ -4,7 +4,7 @@
   "description": "testing library that facilitates running a bundler and anvil instances from JS",
   "private": "false",
   "files": [
-    "dist/**",
+    "dist/*",
     "!dist/**/*.tsbuildinfo",
     "src/**/*.ts",
     "!src/**/*.test.ts"
