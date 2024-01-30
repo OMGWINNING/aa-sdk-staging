@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@alchemy/aa-core": "^2.3.1",
-    "viem": "^1.21.4"
+    "viem": "^2.5.0"
   },
   "publishConfig": {
     "access": "public",

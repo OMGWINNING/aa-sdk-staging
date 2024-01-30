@@ -98,7 +98,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     needs: build_and_test_deploy
     runs-on: ubuntu-latest
-    if: inputs.publish
+    if: false
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
