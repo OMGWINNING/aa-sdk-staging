@@ -48,7 +48,7 @@ jobs:
     needs: changes
     runs-on: ubuntu-latest
     name: Build
-    if: ${{ needs.changes.outputs.docs == 'true' && needs.changes.outputs.code == 'false' }}
+    # if: ${{ needs.changes.outputs.docs == 'true' && needs.changes.outputs.code == 'false' }}
     env:
       NO_BASE_PATH: ${{ inputs.no_base_path }}
     steps:
@@ -90,7 +90,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    if: ${{ needs.changes.outputs.docs == 'true' && needs.changes.outputs.code == 'false' }}
+    # if: ${{ needs.changes.outputs.docs == 'true' && needs.changes.outputs.code == 'false' }}
     needs: build
     runs-on: ubuntu-latest
     name: Deploy
