@@ -15,6 +15,7 @@ export default defineConfig({
     dark: "/account-kit-dark-mode.svg",
   },
   iconUrl: "kit-icon.svg",
+  basePath: "/aa-sdk-staging",
   rootDir: "./",
   head: (
     <>
