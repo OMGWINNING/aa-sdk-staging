@@ -12,6 +12,7 @@ export default defineConfig({
   description: "Account Abstraction Legos",
   logoUrl: "/kit-logo.svg",
   rootDir: "./",
+  basePath: "/aa-sdk-staging",
   head: (
     <>
       <script
