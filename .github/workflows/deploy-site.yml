@@ -76,9 +76,8 @@ jobs:
           max_attempts: 2
           retry_on: error
           command: |
-            cd site
             yarn build
-            touch dist/.nojekyll
+            touch site/dist/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
