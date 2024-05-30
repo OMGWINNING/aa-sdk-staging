@@ -75,9 +75,10 @@ jobs:
           timeout_minutes: 5
           max_attempts: 2
           retry_on: error
-          command: |
-            yarn build
-            touch site/dist/.nojekyll
+          command: yarn build
+
+      - name: Create .nojekyll
+        run: touch site/dist/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
